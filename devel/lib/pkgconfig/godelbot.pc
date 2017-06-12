@@ -1,0 +1,8 @@
+prefix=/home/james/godelbot_ws/devel
+
+Name: godelbot
+Description: Description of godelbot
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/james/godelbot_ws/devel/lib 
+Requires: 
