@@ -3,7 +3,7 @@
 import rospy
 import socket
 from godelbot.msg import drive_param
-
+from godelbot.srv import set_camera_mode
 """
 Warning: This code has not been tested at all
 
@@ -40,6 +40,13 @@ def parseCommand(cmd, driveParam):
     elif cmd[0] == 'A':
         driveParam.angle = val
         validState = True
+    elif cmd[0] == 'C':
+        rospy.wait_for_service("set_camera_mode")
+        set_cam_mode = rospy.ServiceProxy('set_camera_mode', set_camera_mode)
+        try:
+            set_cam_mode(val)
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
     else:
         # Unknown command byte
         validState = False
@@ -53,6 +60,7 @@ def parseMessage(msg, pub):
         If the command string is valid, a drive parameter will be
         published
     """
+    print msg    
     driveParam = drive_param()
     if ";" in msg:
         arr = msg.split(";")
@@ -63,13 +71,14 @@ def parseMessage(msg, pub):
 
         # Only publish driveParam if all parsed parameters are OK
         if okState is True:
+            print("publishing drive_params")
             pub.publish(driveParam)
     else:
         pass
 
 
 def main():
-    UDP_IP = "127.0.0.1"    # loopback
+    UDP_IP = "192.168.0.100"    # loopback
     UDP_PORT = 11156
 
     rospy.init_node("udpRemote", anonymous=True)

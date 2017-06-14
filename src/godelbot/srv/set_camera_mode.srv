@@ -1,0 +1,6 @@
+# starts the camera in the given mode
+# the modes are either save training photos (0)
+# or publish image data as a message (1)
+uint8 mode
+---
+bool success

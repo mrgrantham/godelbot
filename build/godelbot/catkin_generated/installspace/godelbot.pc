@@ -3,6 +3,6 @@ prefix=/home/james/godelbot_ws/install
 Name: godelbot
 Description: Description of godelbot
 Version: 0.0.0
-Cflags: 
-Libs: -L/home/james/godelbot_ws/install/lib 
-Requires: 
+Cflags: -I/home/james/godelbot_ws/install/include
+Libs: -L/home/james/godelbot_ws/install/lib -lgodelbot
+Requires: roscpp rospy std_msgs message_runtime

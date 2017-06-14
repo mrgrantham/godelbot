@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -5,6 +6,7 @@ import time
 import cv2
 from datetime import datetime
 from imutils.video import FPS
+from godelbot.srv import set_camera_mode
 
 import rospy
 
@@ -60,15 +62,21 @@ class godelbotVideoStream:
 def saveFrame(godelStream, fps):
     image = godelStream.read()     
     curtime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S.%f") 
-    cv2.imwrite("images/" + curtime + ".jpg",image)
+    cv2.imwrite("~/Training_Images/" + curtime + ".jpg",image)
     cv2.imshow("Image", image)
     fps.update()
 
-def captureTraining():
-    godelStream = godelbotVideoStream().start()
+camera_on = False
+stop_camera = False
+godelStream = godelbotVideoStream().start()
 
+def captureTraining():
+    global stop_camera
+    global camera_on
+    global godelStream
+    godelStream.start()
     cv2.namedWindow('Image',cv2.WINDOW_NORMAL)
-    #cv2.resizeWindow('Image',600,600)
+    cv2.resizeWindow('Image',600,600)
 
 
         # allow camera to warm up
@@ -82,20 +90,43 @@ def captureTraining():
         t = Thread(target=saveFrame(godelStream, fps))
         # try to approximate saving at 10 FPS
         time.sleep(0.065)
-        k = cv2.waitKey(1) # wait 1ms
-        if k == 27: # esc key i guess
-            cv2.destroyAllWindows()
+        cv2.waitKey(1) # wait 1ms
+        if stop_camera: 
+            print "stop received"
+            #cv2.destroyAllWindows()
             running = False
             fps.stop()
             godelStream.stop()
+            camera_on = False
             print("elapsed time: {:.2f}".format(fps.elapsed()))
             print("approx FPS: {:.2f}".format(fps.fps()))
             break
 
 
+def camera_mode_handler(val):
+    global camera_on
+    global stop_camera 
+    # print "camera handler called with %d" % val.mode
+    if (val.mode == 0):
+        if not stop_camera:
+            print "Stopping Camera"
+            stop_camera = True
+    elif (val.mode == 1):
+        if not camera_on:
+            print "Activating camera for training capture"
+            camera_on = True
+            stop_camera = False
+            trainThread = Thread(target=captureTraining).start()
+            print "spawned captureTraining thread"
+        else:
+            print "Camera is already on"
+    return True
 
 def main():
-    captureTraining()
+    rospy.init_node('camera_control')
+    s = rospy.Service('set_camera_mode',set_camera_mode,camera_mode_handler)
+    print "camera control node ready"
+    rospy.spin()
 
 if __name__ == "__main__":
     main()
