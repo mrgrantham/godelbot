@@ -7,6 +7,7 @@ import cv2
 from datetime import datetime
 from imutils.video import FPS
 from godelbot.srv import set_camera_mode
+from godelbot.msg import drive_param
 
 import rospy
 
@@ -85,14 +86,25 @@ camera_on = False
 stop_camera = False
 godelStream = godelbotVideoStream()
 fps = FPS()
+movement = 0
+
+def listener_callback(data):
+    global movement
+    print movement
+    movement = data.movement
+
+def drive_param_listener():
+    #rospy.init_node('camera_drive-param_listener', anonymous=True)
+    rospy.Subscriber("camera_control", drive_param, listener_callback)
+    rospy.spin()
 
 def saveFrame():
     global godelStream
     global fps
-    print "save frame"
+    #print "save frame"
     image = godelStream.read()     
     curtime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S.%f") 
-    #cv2.imwrite("images/" + curtime + ".jpg",image)
+    cv2.imwrite("images/" + "M" + str(movement) + "_" +  curtime + ".jpg",image)
     #cv2.imshow("Image", image)
     #cv2.waitKey(1) # wait 1ms
     fps.update()
@@ -114,13 +126,12 @@ def captureTraining():
     time.sleep(1.0)
     fps.start()
 
-
     # grab an image
     running = True
     print "capture training with running: %d" % running
     while (running):
         t = Thread(target=saveFrame).start()
-        print "ran saveframe thread"
+        #print "ran saveframe thread"
         # try to approximate saving at 10 FPS
         time.sleep(0.065)
         if stop_camera: 
@@ -145,8 +156,8 @@ def camera_mode_handler(val):
         if not stop_camera:
             print "Stopping Camera"
             stop_camera = True
-        else:
-            print "Camera already stopped"
+        #else:
+            #print "Camera already stopped"
     elif (val.mode == 1):
         if not camera_on:
             print "Activating camera for training capture"
@@ -154,13 +165,14 @@ def camera_mode_handler(val):
             stop_camera = False
             Thread(target=captureTraining).start()
             print "spawned captureTraining thread"
-        else:
-            print "Camera is already on"
+        #else:
+            #print "Camera is already on"
     return True
 
 def main():
     rospy.init_node('camera_control')
     s = rospy.Service('set_camera_mode',set_camera_mode,camera_mode_handler)
+    listen = Thread(target=drive_param_listener).start()
     print "camera control node ready"
     rospy.spin()
 

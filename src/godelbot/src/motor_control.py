@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 
 import rospy
+import threading
 from time import sleep
 from godelbot.msg import drive_param
 
@@ -62,17 +63,18 @@ def test():
         move_right_wheel(0)
         sleep(4)
 
-def callbaack(data):
+def callback(data):
+    global movement
     print "movement: {} received".format(data.movement)
     movement = data.movement
 
 def listener():
     rospy.init_node('motor_control', anonymous=True)
-    rospy.Subscriber("chatter", String, callback)
-
+    rospy.Subscriber("chatter", drive_param, callback)
     rospy.spin()
 
 def motor_loop():
+    global movement
     new_move = 0
     while True:
         if new_move != movement:

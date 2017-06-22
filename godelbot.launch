@@ -1,0 +1,8 @@
+<launch>
+    <node name="udpRemote" pkg="godelbot" type="udpRemote.py" />
+    <node name="camera_control" pkg="godelbot" type="camera_control.py" />
+    <node name="motor_control" pkg="godelbot" type="motor_control.py" />
+
+
+
+</launch>
