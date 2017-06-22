@@ -24,22 +24,17 @@ struct drive_param_
   typedef drive_param_<ContainerAllocator> Type;
 
   drive_param_()
-    : velocity(0.0)
-    , angle(0.0)  {
+    : movement(0)  {
     }
   drive_param_(const ContainerAllocator& _alloc)
-    : velocity(0.0)
-    , angle(0.0)  {
+    : movement(0)  {
   (void)_alloc;
     }
 
 
 
-   typedef float _velocity_type;
-  _velocity_type velocity;
-
-   typedef float _angle_type;
-  _angle_type angle;
+   typedef uint8_t _movement_type;
+  _movement_type movement;
 
 
 
@@ -118,12 +113,12 @@ struct MD5Sum< ::godelbot::drive_param_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "23ee9ebc4f65684302501539608c3833";
+    return "1765b6536f8ff9cc8cd9c7b89dbdcbfd";
   }
 
   static const char* value(const ::godelbot::drive_param_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x23ee9ebc4f656843ULL;
-  static const uint64_t static_value2 = 0x02501539608c3833ULL;
+  static const uint64_t static_value1 = 0x1765b6536f8ff9ccULL;
+  static const uint64_t static_value2 = 0x8cd9c7b89dbdcbfdULL;
 };
 
 template<class ContainerAllocator>
@@ -142,8 +137,7 @@ struct Definition< ::godelbot::drive_param_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "float32 velocity\n\
-float32 angle\n\
+    return "uint8 movement\n\
 ";
   }
 
@@ -162,8 +156,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.velocity);
-      stream.next(m.angle);
+      stream.next(m.movement);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -182,10 +175,8 @@ struct Printer< ::godelbot::drive_param_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::godelbot::drive_param_<ContainerAllocator>& v)
   {
-    s << indent << "velocity: ";
-    Printer<float>::stream(s, indent + "  ", v.velocity);
-    s << indent << "angle: ";
-    Printer<float>::stream(s, indent + "  ", v.angle);
+    s << indent << "movement: ";
+    Printer<uint8_t>::stream(s, indent + "  ", v.movement);
   }
 };
 

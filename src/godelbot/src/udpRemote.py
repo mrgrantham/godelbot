@@ -34,14 +34,15 @@ def parseCommand(cmd, driveParam):
         validState = False
         return driveParam, validState  # unable to parse, bail
 
-    if cmd[0] == 'V':
-        driveParam.velocity = val
+    if cmd[0] == 'M':
+        driveParam.movement = val
         validState = True
-    elif cmd[0] == 'A':
-        driveParam.angle = val
-        validState = True
+#    elif cmd[0] == 'A':
+#        driveParam.angle = val
+#        validState = True
     elif cmd[0] == 'C':
-        rospy.wait_for_service("set_camera_mode")
+        # dont want to wait forever for the camera node 
+        #rospy.wait_for_service("set_camera_mode")
         set_cam_mode = rospy.ServiceProxy('set_camera_mode', set_camera_mode)
         try:
             set_cam_mode(val)

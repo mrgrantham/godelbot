@@ -92,10 +92,10 @@ def saveFrame():
     print "save frame"
     image = godelStream.read()     
     curtime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S.%f") 
-    cv2.imwrite("images/" + curtime + ".jpg",image)
-    cv2.imshow("Image", image)
+    #cv2.imwrite("images/" + curtime + ".jpg",image)
+    #cv2.imshow("Image", image)
+    #cv2.waitKey(1) # wait 1ms
     fps.update()
-    cv2.waitKey(1) # wait 1ms
 
 def captureTraining():
     global stop_camera
@@ -103,10 +103,11 @@ def captureTraining():
     global godelStream
     godelStream.start()
     print "back from godel start"
-    cv2.startWindowThread()
-    cv2.namedWindow('Image',cv2.WINDOW_NORMAL)
+    #cv2.startWindowThread()
+    print "thread started. attempting to set named window"
+    #cv2.namedWindow('Image',cv2.WINDOW_NORMAL)
     print "resizeing windows"
-    cv2.resizeWindow('Image',600,600)
+    #cv2.resizeWindow('Image',600,600)
     
     print "camera warmup"
     # allow camera to warm up
@@ -124,7 +125,7 @@ def captureTraining():
         time.sleep(0.065)
         if stop_camera: 
             print "stop received"
-            cv2.destroyAllWindows()
+            #cv2.destroyAllWindows()
             running = False
             print "before FPS stop"
             fps.stop()

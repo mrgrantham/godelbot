@@ -14,62 +14,50 @@
 
 (defclass godelbot::drive_param
   :super ros::object
-  :slots (_velocity _angle ))
+  :slots (_movement ))
 
 (defmethod godelbot::drive_param
   (:init
    (&key
-    ((:velocity __velocity) 0.0)
-    ((:angle __angle) 0.0)
+    ((:movement __movement) 0)
     )
    (send-super :init)
-   (setq _velocity (float __velocity))
-   (setq _angle (float __angle))
+   (setq _movement (round __movement))
    self)
-  (:velocity
-   (&optional __velocity)
-   (if __velocity (setq _velocity __velocity)) _velocity)
-  (:angle
-   (&optional __angle)
-   (if __angle (setq _angle __angle)) _angle)
+  (:movement
+   (&optional __movement)
+   (if __movement (setq _movement __movement)) _movement)
   (:serialization-length
    ()
    (+
-    ;; float32 _velocity
-    4
-    ;; float32 _angle
-    4
+    ;; uint8 _movement
+    1
     ))
   (:serialize
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
-     ;; float32 _velocity
-       (sys::poke _velocity (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
-     ;; float32 _angle
-       (sys::poke _angle (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
+     ;; uint8 _movement
+       (write-byte _movement s)
      ;;
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
-   ;; float32 _velocity
-     (setq _velocity (sys::peek buf ptr- :float)) (incf ptr- 4)
-   ;; float32 _angle
-     (setq _angle (sys::peek buf ptr- :float)) (incf ptr- 4)
+   ;; uint8 _movement
+     (setq _movement (sys::peek buf ptr- :char)) (incf ptr- 1)
    ;;
    self)
   )
 
-(setf (get godelbot::drive_param :md5sum-) "23ee9ebc4f65684302501539608c3833")
+(setf (get godelbot::drive_param :md5sum-) "1765b6536f8ff9cc8cd9c7b89dbdcbfd")
 (setf (get godelbot::drive_param :datatype-) "godelbot/drive_param")
 (setf (get godelbot::drive_param :definition-)
-      "float32 velocity
-float32 angle
+      "uint8 movement
 
 ")
 
 
 
-(provide :godelbot/drive_param "23ee9ebc4f65684302501539608c3833")
+(provide :godelbot/drive_param "1765b6536f8ff9cc8cd9c7b89dbdcbfd")
 
 
