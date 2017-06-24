@@ -90,13 +90,9 @@ movement = 0
 
 def listener_callback(data):
     global movement
-    print movement
+    # print "callback called with " + str(movement)
     movement = data.movement
 
-def drive_param_listener():
-    #rospy.init_node('camera_drive-param_listener', anonymous=True)
-    rospy.Subscriber("camera_control", drive_param, listener_callback)
-    rospy.spin()
 
 def saveFrame():
     global godelStream
@@ -104,7 +100,7 @@ def saveFrame():
     #print "save frame"
     image = godelStream.read()     
     curtime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S.%f") 
-    cv2.imwrite("images/" + "M" + str(movement) + "_" +  curtime + ".jpg",image)
+    cv2.imwrite("/home/james/Training_Images/" + "M" + str(movement) + "_" +  curtime + ".jpg",image)
     #cv2.imshow("Image", image)
     #cv2.waitKey(1) # wait 1ms
     fps.update()
@@ -133,7 +129,7 @@ def captureTraining():
         t = Thread(target=saveFrame).start()
         #print "ran saveframe thread"
         # try to approximate saving at 10 FPS
-        time.sleep(0.065)
+        time.sleep(0.100)
         if stop_camera: 
             print "stop received"
             #cv2.destroyAllWindows()
@@ -172,7 +168,7 @@ def camera_mode_handler(val):
 def main():
     rospy.init_node('camera_control')
     s = rospy.Service('set_camera_mode',set_camera_mode,camera_mode_handler)
-    listen = Thread(target=drive_param_listener).start()
+    rospy.Subscriber("drive_parameters", drive_param, listener_callback)
     print "camera control node ready"
     rospy.spin()
 

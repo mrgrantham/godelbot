@@ -48,9 +48,13 @@ def parseCommand(cmd, driveParam):
             set_cam_mode(val)
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
+    elif cmd[0] == 'D':
+		autonomous = 0		
+		# autonomous mode here
     else:
+		print "unknown command " + cmd[0]
         # Unknown command byte
-        validState = False
+        # validState = False
 
     return driveParam, validState  # valid drive parameter parsed
 
@@ -83,7 +87,7 @@ def main():
     UDP_PORT = 11156
 
     rospy.init_node("udpRemote", anonymous=True)
-    pub = rospy.Publisher("drive_parameters", drive_param, queue_size=10)
+    pub = rospy.Publisher("drive_parameters", drive_param, queue_size=2)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))

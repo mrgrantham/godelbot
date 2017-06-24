@@ -68,10 +68,6 @@ def callback(data):
     print "movement: {} received".format(data.movement)
     movement = data.movement
 
-def listener():
-    rospy.init_node('motor_control', anonymous=True)
-    rospy.Subscriber("chatter", drive_param, callback)
-    rospy.spin()
 
 def motor_loop():
     global movement
@@ -85,10 +81,10 @@ def motor_loop():
         sleep(0.05)
 
 def main():
-    
+    rospy.init_node('motor_control', anonymous=True)
+    rospy.Subscriber("drive_parameters", drive_param, callback)
     setup()
-    
     t=threading.Thread(target=motor_loop).start()
-    listener()   
+    rospy.spin()
 
 if __name__ == "__main__": main()
