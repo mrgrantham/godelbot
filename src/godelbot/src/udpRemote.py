@@ -65,7 +65,6 @@ def parseMessage(msg, pub):
         If the command string is valid, a drive parameter will be
         published
     """
-    print msg    
     driveParam = drive_param()
     if ";" in msg:
         arr = msg.split(";")
@@ -76,7 +75,6 @@ def parseMessage(msg, pub):
 
         # Only publish driveParam if all parsed parameters are OK
         if okState is True:
-            print("publishing drive_params")
             pub.publish(driveParam)
     else:
         pass

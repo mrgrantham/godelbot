@@ -65,7 +65,6 @@ def test():
 
 def callback(data):
     global movement
-    print "movement: {} received".format(data.movement)
     movement = data.movement
 
 
@@ -74,7 +73,6 @@ def motor_loop():
     new_move = 0
     while True:
         if new_move != movement:
-            print "new move"
             new_move = movement
             move_right_wheel(movement & 3)
             move_left_wheel((movement >> 2) & 3)
